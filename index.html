@@ -1016,14 +1016,14 @@
 
         // Hàm khởi tạo dashboard
         async function initializeDashboard() {
-            console.log('🔄 Đang tải dữ liệu từ Google Sheet...');
-            
-            // Kiểm tra cấu hình
-            if (SHEET_CONFIG.SHEET_ID === 'YOUR_SHEET_ID') {
-                console.warn('⚠️ Vui lòng cấu hình SHEET_ID và API_KEY');
-                alert('Vui lòng cấu hình Google Sheet ID và API Key trước.');
-                return;
-            }
+    console.log('🔄 Đang tải dữ liệu từ Google Sheet...');
+
+    const posmData = await fetchGoogleSheetData(SHEET_CONFIG.SHEETS.VERIFY);
+    await updatePOSMTable();
+    await updateKPICards(posmData);
+
+    console.log('✅ Dữ liệu đã được cập nhật thành công');
+}
 
             // Tải dữ liệu từ các sheet khác nhau
             const posmData = await fetchGoogleSheetData(SHEET_CONFIG.SHEETS.DETAILS);
