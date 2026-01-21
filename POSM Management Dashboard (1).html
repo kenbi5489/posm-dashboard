@@ -693,13 +693,13 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Khu vực</th>
-                            <th>Cửa hàng</th>
-                            <th>Thương hiệu</th>
-                            <th>Ngày tải</th>
-                            <th>Link ảnh trước</th>
-                            <th>Link ảnh sau</th>
-                            <th>Trạng thái</th>
+                            <th>Week</th>
+<th>Brand</th>
+<th>Mã CV</th>
+<th>Địa chỉ</th>
+<th>Quận</th>
+<th>Status</th>
+<th>Ghi chú</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -890,11 +890,9 @@
             API_KEY: 'AIzaSyAeTa1gk8_AoN56UX9ngDGJ93Tbj2eABF8', // Lấy từ Google Cloud Console
             // Tên các sheet trong workbook
             SHEETS: {
-                POSM: 'POSM Data',           // Sheet chứa dữ liệu POSM
-                PAYMENT: 'Payment Data',     // Sheet chứa dữ liệu thanh toán
-                IMAGES: 'Image Data',        // Sheet chứa link ảnh
-                DETAILS: 'Store Details'     // Sheet chứa chi tiết cửa hàng
-            }
+    VERIFY: 'Data nghiệm thu',
+    WEEKLY: 'Data chia hàng tuần'
+}
         };
 
         // Hàm gọi Google Sheets API
@@ -912,29 +910,42 @@
 
         // Hàm cập nhật bảng POSM chi tiết
         async function updatePOSMTable() {
-            const data = await fetchGoogleSheetData(SHEET_CONFIG.SHEETS.DETAILS);
-            if (!data.length) return;
+            const data = await fetchGoogleSheetData(SHEET_CONFIG.SHEETS.VERIFY);
+    if (!data.length) return;
 
-            const tbody = document.querySelector('.table-card:last-of-type tbody');
-            tbody.innerHTML = '';
+    const tbody = document.querySelector('.table-card:last-of-type tbody');
+    if (!tbody) return;
 
-            // Bỏ qua hàng đầu tiên (header)
-            for (let i = 1; i < data.length; i++) {
-                const row = data[i];
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><span class="badge badge-success">${row[0] || ''}</span></td>
-                    <td>${row[1] || ''}</td>
-                    <td>${row[2] || ''}</td>
-                    <td>${row[3] || ''}</td>
-                    <td>${row[4] || ''}</td>
-                    <td><span class="badge badge-success">${row[5] || ''}</span></td>
-                    <td>${row[6] || ''}</td>
-                `;
-                tbody.appendChild(tr);
-            }
-        }
+    tbody.innerHTML = '';
 
+    // Bỏ qua hàng đầu tiên (header)
+    for (let i = 1; i < data.length && i < 50; i++) {
+        const row = data[i];
+        // Map columns: Week(0), Brand(1), MaCV(2), DiaChi(3), Quan(4), Status(11)
+        const week = row[0] || '';
+        const brand = row[1] || '';
+        const maCv = row[2] || '';
+        const diaChi = row[3] || '';
+        const quan = row[4] || '';
+        const status = row[11] || 'Chưa kiểm tra';
+        
+        const statusBadge = status.includes('Có POSM') || status.includes('CÓ POSM') 
+            ? '<span class="badge badge-success">Có POSM</span>' 
+            : '<span class="badge badge-danger">Không POSM</span>';
+        
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${week}</td>
+            <td>${brand}</td>
+            <td>${maCv}</td>
+            <td>${diaChi}</td>
+            <td>${quan}</td>
+            <td>${statusBadge}</td>
+            <td></td>
+        `;
+        tbody.appendChild(tr);
+    }
+}
         // Hàm cập nhật bảng ảnh
         async function updateImageTable() {
             const data = await fetchGoogleSheetData(SHEET_CONFIG.SHEETS.IMAGES);
