@@ -1015,7 +1015,8 @@
         }
 
         // Hàm khởi tạo dashboard
-        async function initializeDashboard() {
+    // Hàm khởi tạo dashboard
+async function initializeDashboard() {
     console.log('🔄 Đang tải dữ liệu từ Google Sheet...');
 
     const posmData = await fetchGoogleSheetData(SHEET_CONFIG.SHEETS.VERIFY);
@@ -1024,6 +1025,12 @@
 
     console.log('✅ Dữ liệu đã được cập nhật thành công');
 }
+
+// Tự động tải dữ liệu khi trang được tải
+document.addEventListener('DOMContentLoaded', initializeDashboard);
+
+// Làm mới dữ liệu mỗi 5 phút
+setInterval(initializeDashboard, 5 * 60 * 1000);
 
             // Tải dữ liệu từ các sheet khác nhau
             const posmData = await fetchGoogleSheetData(SHEET_CONFIG.SHEETS.DETAILS);
